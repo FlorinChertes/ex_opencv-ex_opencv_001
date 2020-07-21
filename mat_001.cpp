@@ -27,13 +27,13 @@ std::string time_in_HH_MM_SS_MMM()
 
     std::ostringstream oss;
 
-    oss << std::put_time(&bt, "%H:%M:%S"); // HH:MM:SS
+    oss << std::put_time(&bt, "%H_%M_%S"); // HH:MM:SS
     oss << '.' << std::setfill('0') << std::setw(3) << ms.count();
 
     return oss.str();
 }
 
-void test_webcam()
+void test_webcam(const bool show_img)
 {
     std::cout << "instatiate VideoCpture." << std::endl;
     cv::VideoCapture cap;
@@ -69,9 +69,11 @@ void test_webcam()
         
         const std::string file_name ("../images/img_" + time_in_HH_MM_SS_MMM() + ".jpg");
 
-        cv::imshow("this is you, smile! :)", frame);
+        if (show_img == true) {
+            cv::imshow("this is you, smile! :)", frame);
+        }
 
-        imwrite( file_name, frame );        
+        imwrite( file_name, frame );
 
         if( cv::waitKey(10) == 27 )
             break; // stop capturing by pressing ESC     
@@ -112,14 +114,16 @@ int main( int argc, char** argv )
 {
     if( argc != 2)
     {
-        printf( " No image data \n " );
+        printf( " No image data, input file name \n " );
         return -1;
     }
 
     char* imageName = argv[1];
     //mat_test_001(imageName);
     //mat_test_002();
-    test_webcam();
+
+    const bool show_img = (std::string(argv[1]) == "yes") ? true : false;
+    test_webcam(show_img);
 
     return 0;
 }
